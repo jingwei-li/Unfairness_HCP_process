@@ -59,8 +59,28 @@ cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process/match_spli
     /home/jingweil/storage/MyProject/fairAI/HCP_race/mat/split_except_AA_WA_rm_AA_outliers18
 ```
 
+## Step 5: combine the splits of AA, splits of matched WA, and splits of other subjects
 
-## Step N: compare variances of true behavioral scores between matched AA and WA (Levene's test)
+```matlab
+for seed = 1:400
+    proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
+    matched_bhvr_ls = fullfile(proj_dir, 'mat', 'split_WA_rm_AA_outliers18', ...
+        'usable_seeds', ['usable_behaviors_seed' num2str(seed) '.txt']); 
+    if(exist(matched_bhvr_ls, 'file')) 
+        HCP_combine_AA_WA_others_folds(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18', ...
+            ['split_seed' num2str(seed) '.mat']), fullfile(proj_dir, 'mat', ...
+            'split_WA_rm_AA_outliers18', ['split_seed' num2str(seed) '.mat']), ...
+            fullfile(proj_dir, 'mat', 'split_except_AA_WA_rm_AA_outliers18', ...
+            ['split_seed' num2str(seed) '.mat']), fullfile(proj_dir, 'scripts', 'lists', ...
+            'subjects_wIncome_948.txt'), fullfile(proj_dir, 'scripts', 'lists', ...
+            'Cognitive_Personality_Task_Social_Emotion_58.txt'), matched_bhvr_ls, ...
+            fullfile(proj_dir, 'mat', 'combine_AA_matchedWA_others_rm_AA_outliers18', ...
+            ['split_seed' num2str(seed)]))
+    end
+end
+```
+
+## Step 6: compare variances of true behavioral scores between matched AA and WA (Levene's test)
 
 ```matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';

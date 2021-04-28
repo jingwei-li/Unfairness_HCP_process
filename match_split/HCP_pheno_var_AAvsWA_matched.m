@@ -99,7 +99,7 @@ for seed = 1:max_seed
 
             % Levene's test
             [curr_p, curr_stats] = vartestn([mWA; mAA], [ones(length(mWA),1); 2.*ones(length(mAA),1)], ...
-                'TestType', 'LeveneAbsolute');
+                'TestType', 'LeveneAbsolute', 'Display', 'off');
             p(b, seed_per_bhvr(b)) = curr_p;
             stats(b, seed_per_bhvr(b)) = curr_stats.fstat;
         end

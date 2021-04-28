@@ -47,12 +47,30 @@ HCP_select_matched_seeds('/your/AA/splits/dir', '/your/selected/WA/dir', ...
     '/your/AAvsWA/statistics.mat', 400, '/your/behavioral_list.txt', '/your/output/dir');
 ```
 
-## Split all other subjects (unmatched AA, WA, subjects from other races/ethnicies)
+## Split all other subjects (unmatched AA, WA, subjects from other ethnicies/races)
 
 Related scripts: `HCP_split_except_selectedAAWA.sh`, `HCP_split_except_selectedAAWA.m`.
 
+Example:
 ```bash
 HCP_split_except_selectedAAWA.sh -max_seed 400 -subj_ls <your_subject_list> -bhvr_ls \
     <your_behavioral_list> -AAsplit_stem <your_AA_split_dir>/split_seed -WAsplit_stem \
     <your_WA_split_dir>/split_seed -restricted_csv <your_HCP_restricted_csv> -outdir <your_output_dir>
 ```
+
+## Combine the split AA folds, matched WA folds, and folds of other subjects
+
+The purpose of this step is to generate one `.mat` file per random seed per behavioral measure, which can be fed to the kernel ridge regression package.
+
+Related script: `HCP_combine_AA_WA_others_folds.m`.
+
+Example:
+```matlab
+for seed = 1:400
+    HCP_combine_AA_WA_others_folds('/split/AA/of/current/seed.mat', ...
+        '/split/matched/WA//of/current/seed.mat', '/split/other/subjects/of/current/seed.mat', ...
+        '/full/subject/list.txt', '/full/behavioral/list.txt', ...
+        '/matched/behavioral/list.txt', '/output/directory/')
+end
+
+## Compare variances of true behavioral scores between matched AA and WA (Levene's test)
