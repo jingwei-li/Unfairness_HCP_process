@@ -10,11 +10,11 @@ DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 HCP_dir="/mnt/isilon/CSC1/Yeolab/Data/HCP/S1200"
 rstr_csv="$HCP_dir/scripts/restricted_hcp_data/\
-    RESTRICTED_jingweili_4_12_2017_1200subjects_fill_empty_zygosityGT_by_zygositySR.csv"
+RESTRICTED_jingweili_4_12_2017_1200subjects_fill_empty_zygosityGT_by_zygositySR.csv"
 unrstr_csv="$HCP_dir/scripts/subject_measures/\
-    unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv"
-FS_csv="$HCP_dir/individuals/scripts/Morphometricity/Anat_Sim_Matrix/\
-    FS_jingweili_5_9_2017_2_2_24.csv"
+unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv"
+FS_csv="$HCP_dir/scripts/Morphometricity/Anat_Sim_Matrix/\
+FS_jingweili_5_9_2017_2_2_24.csv"
 
 num_test_folds=10
 num_inner_folds=10
@@ -50,7 +50,7 @@ main() {
     ##########################
     # Call matlab function
     ##########################
-    matlab -nodesktop -nosplash -nodisplay -r " addpath $DIR; HCP_KRR('$rstr_csv', '$unstr_csv', '$FS_csv', \
+    matlab -nodesktop -nosplash -nodisplay -r " addpath $DIR; HCP_KRR('$rstr_csv', '$unrstr_csv', '$FS_csv', \
         '$subj_ls', '$RSFC_file', '$y_name', '$cov_ls', '$FD_file', '$DV_file', '$outdir', '$num_test_folds', \
         '$num_inner_folds', '$seed', '$with_bias', '', '$lambda_set_file', '', '$metric'); exit; " >> $LF 2>&1
 }
@@ -92,7 +92,7 @@ OPTIONAL ARGUMENTS:
                                         /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/subject_measures/\\
                                         unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv
     -FS_csv          <FS_csv>         : The FreeSurfer CSV file downloaded from the HCP website. Default:
-                                        /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/individuals/scripts/Morphometricity/\\
+                                        /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/Morphometricity/\\
                                         Anat_Sim_Matrix/FS_jingweili_5_9_2017_2_2_24.csv
 
 EXAMPLE:
