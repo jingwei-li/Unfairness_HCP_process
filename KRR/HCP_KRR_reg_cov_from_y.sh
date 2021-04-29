@@ -18,7 +18,6 @@ use_seed_bhvr_dir="$proj_dir/mat/split_WA_rm_AA_outliers18/usable_seeds"
 outdir=
 
 main() {
-    with_bias=1
     lambda_set_file="$DIR/lambda_0_20.mat"
     max_seed=400
     num_test_folds=10
@@ -40,7 +39,7 @@ main() {
 
                 cmd="$DIR/HCP_KRR_workflow_optimize_COD.sh -subj_ls $subj_ls -RSFC_file $RSFC_file -y_name"
                 cmd="$cmd $y_name -cov_ls $cov_ls -FD_file $FD_file -DV_file $DV_file -outdir $outdir"
-                cmd="$cmd -seed $seed -with_bias $with_bias -num_test_folds $num_test_folds -num_inner_folds"
+                cmd="$cmd -seed $seed -num_test_folds $num_test_folds -num_inner_folds"
                 cmd="$cmd $num_inner_folds -lambda_set_file $lambda_set_file"
 
                 jname="KRR_${y_name}"
@@ -89,7 +88,7 @@ OPTIONAL ARGUMENTS:
                                             <use_seed_bhvr_dir> is the folder contains these text files.
                                             They are the outputs of '../match_split/HCP_select_matched_seeds.m'
 EXAMPLE:
-    HCP_KRR_reg_cov_from_y.sh -outdir '/your/output/dir/' -subj_ls '/your/subject/list.txt' -FD_file
+    $DIR/HCP_KRR_reg_cov_from_y.sh -outdir '/your/output/dir/' -subj_ls '/your/subject/list.txt' -FD_file
         '/your/FD.txt' -DV_file '/your/DVARS.txt' -RSFC_file '/your/RSFC.mat' -cov_ls '/your/confounds/list.txt'
         -sub_fold_dir '/your/split/folds/dir/' -use_seed_bhvr_dir '/your/selected/seed_behavior_comb/lists/dir'
 " 1>&2; exit 1; }
