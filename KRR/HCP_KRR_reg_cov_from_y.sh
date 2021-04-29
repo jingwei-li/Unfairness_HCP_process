@@ -71,22 +71,40 @@ REQUIRED ARGUMENTS:
 
 OPTIONAL ARGUMENTS:
     -subj_ls           <subj_ls>          : Subject list (full path). Each line corresponds to one subject.
+                                            Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/scripts/lists/\\
+                                            subjects_wIncome_948.txt
     -FD_file           <FD_file>          : A text file (full path) containing the framewise displacement 
                                             for each subject in <subj_ls>. Each line in this file corresponds
-                                            to one subject.
+                                            to one subject. Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/scripts/lists/\\
+                                            FD_948.txt
     -DV_file           <DV_file>          : A text file (full path) containing the DVARS of each subject in 
                                             <subj_ls>. Each line in this file corresponds to one subject.
+                                            Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/scripts/lists/\\
+                                            DV_948.txt
     -RSFC_file         <RSFC_file>        : Full path of the functional connectivity .mat file.
+                                            Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/mat/RSFC_948.mat
     -cov_ls            <cov_ls>           : A text file (full path) containing the confounding variables to
-                                            be regressed out.
+                                            be regressed out. Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/scripts/lists/\\
+                                            covariates_Age_Sex_MT_Educ_ICV_Income.txt
     -sub_fold_dir      <sub_fold_dir>     : The directory storing the combined folds of matched AA, matched WA,
                                             and the remaining subjects. 
+                                            Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/mat/\\
+                                            combine_AA_matchedWA_others_rm_AA_outliers18
     -use_seed_bhvr_dir <use_seed_bhvr_dir>: For each behavioral measure, 40 seed were selected with 
                                             matched AA and WA. These (behavior,seed) combinations 
                                             were saved as a text list for each seed (i.e. for current
                                             seed, which behavioral measures were chosen). 
                                             <use_seed_bhvr_dir> is the folder contains these text files.
                                             They are the outputs of '../match_split/HCP_select_matched_seeds.m'
+                                            Default (only for the author's testing purpose):
+                                            /home/jingweil/storage/MyProject/fairAI/HCP_race/mat/\\
+                                            split_WA_rm_AA_outliers18/usable_seeds
 EXAMPLE:
     $DIR/HCP_KRR_reg_cov_from_y.sh -outdir '/your/output/dir/' -subj_ls '/your/subject/list.txt' -FD_file
         '/your/FD.txt' -DV_file '/your/DVARS.txt' -RSFC_file '/your/RSFC.mat' -cov_ls '/your/confounds/list.txt'
