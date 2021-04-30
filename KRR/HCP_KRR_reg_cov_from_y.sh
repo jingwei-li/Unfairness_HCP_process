@@ -6,6 +6,14 @@
 
 DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
+HCP_dir="/mnt/isilon/CSC1/Yeolab/Data/HCP/S1200"
+rstr_csv="$HCP_dir/scripts/restricted_hcp_data/\
+RESTRICTED_jingweili_4_12_2017_1200subjects_fill_empty_zygosityGT_by_zygositySR.csv"
+unrstr_csv="$HCP_dir/scripts/subject_measures/\
+unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv"
+FS_csv="$HCP_dir/scripts/Morphometricity/Anat_Sim_Matrix/\
+FS_jingweili_5_9_2017_2_2_24.csv"
+
 proj_dir="/home/jingweil/storage/MyProject/fairAI/HCP_race"
 subj_ls="$proj_dir/scripts/lists/subjects_wIncome_948.txt"
 FD_file="$proj_dir/scripts/lists/FD_948.txt"
@@ -40,7 +48,8 @@ main() {
                 cmd="$DIR/HCP_KRR_workflow_optimize_COD.sh -subj_ls $subj_ls -RSFC_file $RSFC_file -y_name"
                 cmd="$cmd $y_name -cov_ls $cov_ls -FD_file $FD_file -DV_file $DV_file -outdir $outdir"
                 cmd="$cmd -seed $seed -num_test_folds $num_test_folds -num_inner_folds"
-                cmd="$cmd $num_inner_folds -lambda_set_file $lambda_set_file"
+                cmd="$cmd $num_inner_folds -lambda_set_file $lambda_set_file -rstr_csv $rstr_csv"
+                cmd="$cmd -unrstr_csv $unrstr_csv -FS_csv $FS_csv"
 
                 jname="KRR_${y_name}"
                 work_dir="$outdir/randseed_${seed}"
@@ -105,6 +114,15 @@ OPTIONAL ARGUMENTS:
                                             Default (only for the author's testing purpose):
                                             /home/jingweil/storage/MyProject/fairAI/HCP_race/mat/\\
                                             split_WA_rm_AA_outliers18/usable_seeds
+    -rstr_csv          <rstr_csv>         : The restricted CSV file downloaded from the HCP website. Default: 
+                                            /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/restricted_hcp_data/\\
+                                            RESTRICTED_jingweili_4_12_2017_1200subjects_fill_empty_zygosityGT_by_zygositySR.csv
+    -unrstr_csv        <unrstr_csv>       : The unrestricted CSV file downloaded from the HCP website. Default:
+                                            /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/subject_measures/\\
+                                            unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv
+    -FS_csv            <FS_csv>           : The FreeSurfer CSV file downloaded from the HCP website. Default:
+                                            /mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/Morphometricity/\\
+                                            Anat_Sim_Matrix/FS_jingweili_5_9_2017_2_2_24.csv
 EXAMPLE:
     $DIR/HCP_KRR_reg_cov_from_y.sh -outdir '/your/output/dir/' -subj_ls '/your/subject/list.txt' -FD_file
         '/your/FD.txt' -DV_file '/your/DVARS.txt' -RSFC_file '/your/RSFC.mat' -cov_ls '/your/confounds/list.txt'
