@@ -25,6 +25,15 @@ proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
 
 2. Accuracy metric: Pearson's correlation
 
+```bash
+cd ../KRR
+proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
+./HCP_KRR_predictable_behavior.sh -KRR_dir \
+    $proj_dir/trained_model/split_948sub_AA_matchedWA_rm_AA_outliers18/outputs/l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y \
+    -test_metric corr -intrim_csv $proj_dir/scripts/lists/Multi-level_block_perm_948.csv \
+    -outmat $proj_dir/mat/predictability/corr_reg_AgeSexMtEducIcvInc_from_y.mat
+```
+
 ## Calculate predictive COD and Pearson's correlation for matched AA and WA separately
 
 ```matlab
