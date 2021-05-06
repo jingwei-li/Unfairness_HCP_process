@@ -8,6 +8,23 @@ cd ../KRR
     outputs/l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y
 ```
 
+## Test which behavioral measures were predictable
+
+Use multi-level block permutation test to check which behavioral measures could achieve higher-than-chance prediction accuracies across all test subjects (including all ethnicies/races, not only AA and WA).
+
+1. Accuracy metric: predictive COD
+
+```bash
+cd ../KRR
+proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
+./HCP_KRR_predictable_behavior.sh -KRR_dir \
+    $proj_dir/trained_model/split_948sub_AA_matchedWA_rm_AA_outliers18/outputs/l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y \
+    -test_metric predictive_COD -intrim_csv $proj_dir/scripts/lists/Multi-level_block_perm_948.csv \
+    -outmat $proj_dir/mat/predictability/pCOD_reg_AgeSexMtEducIcvInc_from_y.mat
+```
+
+2. Accuracy metric: Pearson's correlation
+
 ## Calculate predictive COD and Pearson's correlation for matched AA and WA separately
 
 ```matlab
