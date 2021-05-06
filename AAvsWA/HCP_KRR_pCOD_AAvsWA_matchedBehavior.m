@@ -1,15 +1,59 @@
-function HCP_KRR_pCOD_AAvsWA_matchedBehavior( KRR_dir, max_seed, num_test_folds, split_AAdir, split_WAdir, ...
-    use_seed_bhvr_ldir, outmat, mtch_bhvr_ls, full_bhvr_ls, subj_ls )
+function HCP_KRR_acc_AAvsWA_matchedBehavior( KRR_dir, max_seed, num_test_folds, split_AAdir, split_WAdir, ...
+    use_seed_bhvr_ldir, out_pCOD, out_corr, mtch_bhvr_ls, full_bhvr_ls, subj_ls )
 
-% HCP_KRR_pCOD_AAvsWA_matchedBehavior( KRR_dir, max_seed, num_test_folds, split_AAdir, split_WAdir, ...
-%     use_seed_bhvr_ldir, outmat, mtch_bhvr_ls, full_bhvr_ls, subj_ls )
+% HCP_KRR_acc_AAvsWA_matchedBehavior( KRR_dir, max_seed, num_test_folds, split_AAdir, split_WAdir, ...
+%     use_seed_bhvr_ldir, out-pCOD, out_corr, mtch_bhvr_ls, full_bhvr_ls, subj_ls )
 %
-% 
+% Calculate predictive COD and Pearson's correlation accuracies for the matched AA and WA groups separately. 
+% The predition was performed using kernel ridge regression.
+%
+% Inputs:
+% - KRR_dir
+%   The top-level output directory of kernel ridge regression. This directory contains one subdirectory 
+%   for each random data split. Within each random data split folder, there is a subfolder corresponding
+%   to each behavioral measures (for which matdhed AA and WA can be selected).
+%
+% - max_seed
+%   Maximal random seed used to split subjects into folds.
+%
+% - num_test_folds
+%   A string or scalar, the number of training-test cross-validation folds.
+%
+% - split_AAdir 
+%   Full path of the directory storing the split folds of African Americans.
+%   It is the output of `../match_split/HCP_split_AA_rm_hardtomatch.m`.
+%
+% - split_WAdir
+%   Full path of the directory storing the white Americans that were matched to African Americans.
+%   It is the output of `../match_split/HCP_match_WA_with_AAfolds.sh`.
+%
+% - use_seed_bhvr_ldir
+%   For each behavioral measure, 40 seed were selected with matched AA and WA. These (behavior,seed) 
+%   combinations were saved as a text list for each seed (i.e. for current seed, which behavioral 
+%   measures were chosen). <use_seed_bhvr_dir> is the folder contains these text files. They are the 
+%   outputs of '../match_split/HCP_select_matched_seeds.m'. 
+%
+% - out_pCOD
+%   Full path of the output .mat file saving the predictive COD metric.
+%
+% - out_corr
+%   Full path of the output .mat file saving the Pearson's correlation accuracies.
+%
+% - mtch_bhvr_ls
+%   The list of behavioral measures for which the matched AA and WA can be found.
+%
+% - full_bhvr_ls
+%   The list of all 58 behavioral measures.
+%
+% - subj_ls
+%   Full path of the subject list.
+%
+% Author: Jingwei Li
 
 if(~exist('num_test_folds', 'var') || isempty(num_test_folds))
     num_test_folds = 10;
 end
-nsseds = 40;
+nseeds = 40;
 
 [mtch_bhvr, n_mtch] = CBIG_text2cell(mtch_bhvr_ls);
 full_bhvr = CBIG_text2cell(full_bhvr_ls);
@@ -19,8 +63,8 @@ full_bhvr = CBIG_text2cell(full_bhvr_ls);
 
 %%
 seed_counts = zeros(1, n_mtch);
-COD_AA = nan(nsseds, n_mtch);  COD_WA = COD_AA;  COD_comb = COD_AA;
-ss_res_AA_all = nan(nsseds, n_mtch);  ss_res_WA_all = ss_res_AA_all;  
+COD_AA = nan(nseeds, n_mtch);  COD_WA = COD_AA;  COD_comb = COD_AA;
+ss_res_AA_all = nan(nseeds, n_mtch);  ss_res_WA_all = ss_res_AA_all;  
 ss_res_comb_all = ss_res_AA_all;  ss_total_all = ss_res_AA_all;
 for seed = 1:max_seed
     txt_name = fullfile(use_seed_bhvr_ldir, ['usable_behaviors_seed' num2str(seed) '.txt']);
@@ -98,26 +142,54 @@ for seed = 1:max_seed
         ss_res_comb_all(seed_counts(b), b) = ss_res_comb;
         ss_total_all(seed_counts(b), b) = ss_total;
 
+        corr_AA(seed_counts(b), b) = CBIG_corr(yp_AA, yt_AA);
+        corr_WA(seed_counts(b), b) = CBIG_corr(yp_WA, yt_WA);
+        corr_comb(seed_counts(b), b) = CBIG_corr([yp_AA; yp_WA], [yt_AA; yt_WA]);
+
         clear sub_fold curr_result
     end
 
     clear AA_fold best_assign cost_history highest_cost
 end
 
-save(outmat, 'COD_AA', 'COD_WA', 'COD_comb', 'ss_res_AA_all', 'ss_res_WA_all', ...
+save(out_pCOD, 'COD_AA', 'COD_WA', 'COD_comb', 'ss_res_AA_all', 'ss_res_WA_all', ...
     'ss_res_comb_all', 'ss_total_all')
+save(out_corr, 'corr_AA', 'corr_WA', 'corr_comb')
 
 %% check which behavioral measures have positive COD
-mean_COD_comb = nanmean(COD_comb, 1);
-CBIG_cell2text(mtch_bhvr(mean_COD_comb>0), fullfile(KRR_dir, 'pCOD_comb_pos_behaviors.txt'))
+if(~exist(fullfile(KRR_dir, 'lists', 'pCOD_union_pos_behaviors.txt'), 'file'))
+    mean_COD_comb = nanmean(COD_comb, 1);
+    CBIG_cell2text(mtch_bhvr(mean_COD_comb>0), fullfile(KRR_dir, 'lists', ...
+        'pCOD_comb_pos_behaviors.txt'))
 
-mean_COD_AA = nanmean(COD_AA, 1);
-CBIG_cell2text(mtch_bhvr(mean_COD_AA>0), fullfile(KRR_dir, 'pCOD_AA_pos_behaviors.txt'))
+    mean_COD_AA = nanmean(COD_AA, 1);
+    CBIG_cell2text(mtch_bhvr(mean_COD_AA>0), fullfile(KRR_dir, 'lists', ...
+        'pCOD_AA_pos_behaviors.txt'))
 
-mean_COD_WA = nanmean(COD_WA, 1);
-CBIG_cell2text(mtch_bhvr(mean_COD_WA>0), fullfile(KRR_dir, 'pCOD_WA_pos_behaviors.txt'))
+    mean_COD_WA = nanmean(COD_WA, 1);
+    CBIG_cell2text(mtch_bhvr(mean_COD_WA>0), fullfile(KRR_dir, 'lists', ...
+        'pCOD_WA_pos_behaviors.txt'))
 
-CBIG_cell2text(mtch_bhvr( mean_COD_AA>0 | mean_COD_WA>0 ), ...
-    fullfile(KRR_dir, 'pCOD_union_pos_behaviors.txt'))
+    CBIG_cell2text(mtch_bhvr( mean_COD_AA>0 | mean_COD_WA>0 ), ...
+        fullfile(KRR_dir, 'lists', 'pCOD_union_pos_behaviors.txt'))
+end
+
+%% check which behavioral measures have positive Pearson's correlation
+if(~exist(fullfile(KRR_dir, 'lists', 'corr_union_pos_behaviors.txt'), 'file'))
+    mean_corr_comb = nanmean(corr_comb, 1);
+    CBIG_cell2text(mtch_bhvr(mean_corr_comb>0), fullfile(KRR_dir, 'lists', ...
+        'corr_comb_pos_behaviors.txt'))
+
+    mean_corr_AA = nanmean(corr_AA, 1);
+    CBIG_cell2text(mtch_bhvr(mean_corr_AA>0), fullfile(KRR_dir, 'lists', ...
+        'corr_AA_pos_behaviors.txt'))
+
+    mean_corr_WA = nanmean(corr_WA, 1);
+    CBIG_cell2text(mtch_bhvr(mean_corr_WA>0), fullfile(KRR_dir, 'lists', ...
+        'corr_WA_pos_behaviors.txt'))
+
+    CBIG_cell2text(mtch_bhvr( mean_corr_AA>0 | mean_corr_WA>0 ), ...
+        fullfile(KRR_dir, 'lists', 'corr_union_pos_behaviors.txt'))
+end
     
 end
