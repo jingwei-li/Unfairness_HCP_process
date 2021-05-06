@@ -51,3 +51,72 @@ HCP_KRR_pCOD_AAvsWA_matchedBehavior( fullfile(proj_dir, 'trained_model', ...
     'scripts', 'lists', 'Cognitive_Personality_Task_Social_Emotion_58.txt'), ...
     fullfile(proj_dir, 'scripts', 'lists', 'subjects_wIncome_948.txt') )
 ```
+
+## Select behavioral measures with above-chance overall prediction accuracy, and with positive accuracy in either matched AA or matched WA
+
+### Get behavioral measures whole correlation accuracy across all subjects was higher than 0.15
+
+```matlab
+clear
+proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
+model_dir = fullfile(proj_dir, 'trained_model', ...
+    'split_948sub_AA_matchedWA_rm_AA_outliers18', 'outputs', ...
+    'l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y');
+[bhvr_nm, nbhvr] = CBIG_text2cell(fullfile(proj_dir, 'scripts', 'lists', ...
+    'Cognitive_Personality_Task_Social_Emotion_51_matched.txt'));
+acc = zeros(nbhvr, 40);
+for b = 1:nbhvr
+    c = 1;
+    for i = 1:234
+        opt_fname = fullfile(model_dir, ['randseed_' num2str(i)], bhvr_nm{b}, ['final_result_' bhvr_nm{b} '.mat']);
+        if(~exist(opt_fname, 'file')); continue; end;
+
+        opt = load(opt_fname);
+        acc(b,c) = mean(opt.optimal_acc, 1);
+        c = c+1;
+    end
+end
+idx = find(mean(acc,2)>0.15);
+CBIG_cell2text(bhvr_nm(idx), fullfile(model_dir, 'lists', ...
+    ['R_thres0.15_' num2str(length(idx)) 'behaviors.txt']))
+```
+
+### find intersection between the above behaviors and behaviors with COD > 0 in either AA or WA, and passed predictability permutation test
+
+1. Accuracy metric: predictive COD
+
+```matlab
+clear
+proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
+model_dir = fullfile(proj_dir, 'trained_model', ...
+    'split_948sub_AA_matchedWA_rm_AA_outliers18', 'outputs', ...
+    'l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y');
+R_15 = CBIG_text2cell(fullfile(model_dir, 'lists', ['R_thres0.15_9behaviors.txt']));
+
+COD_union = CBIG_text2cell(fullfile(model_dir, 'lists', ...
+    'COD_union_positive_behaviors.txt'));
+load(fullfile(proj_dir, 'mat', 'predictability', 'pCOD_reg_AgeSexMtEducIcvInc_from_y.mat'))
+tmp = intersect(COD_union, sig_behaviors, 'stable');
+tmp = intersect(tmp, R_15, 'stable');
+CBIG_cell2text(tmp, fullfile(model_dir, 'lists', 'COD_predictable_behaviors.txt'))
+```
+
+2. Accuracy metric: Pearson's correlation
+
+```matlab
+clear
+proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
+model_dir = fullfile(proj_dir, 'trained_model', ...
+    'split_948sub_AA_matchedWA_rm_AA_outliers18', 'outputs', ...
+    'l2_0_20_opt_pCOD_reg_AgeSexMtEducIcvInc_from_y');
+R_15 = CBIG_text2cell(fullfile(model_dir, 'lists', ['R_thres0.15_9behaviors.txt']));
+
+corr_union = CBIG_text2cell(fullfile(model_dir, 'lists', ...
+    'corr_union_positive_behaviors.txt'));
+load(fullfile(proj_dir, 'mat', 'predictability', 'corr_reg_AgeSexMtEducIcvInc_from_y.mat'))
+tmp = intersect(corr_union, sig_behaviors, 'stable');
+tmp = intersect(tmp, R_15, 'stable');
+CBIG_cell2text(tmp, fullfile(model_dir, 'lists', 'corr_predictable_behaviors.txt'))
+```
+
+## Statistical test for the accuracy difference between matched AA and WA
