@@ -72,5 +72,18 @@ for seed = 1:400
         '/full/subject/list.txt', '/full/behavioral/list.txt', ...
         '/matched/behavioral/list.txt', '/output/directory/')
 end
+```
 
 ## Compare variances of true behavioral scores between matched AA and WA (Levene's test)
+
+Related script: `HCP_pheno_var_AAvsWA_matched.m`.
+
+Example:
+
+```matlab
+HCP_pheno_var_AAvsWA_matched('/your/matched/AA/splits/dir/', ...
+    '/your/matched/WA/splits/dir/', '/output/Levene/test.mat', ...
+    '/full/subject/list.txt', '/matched/behavioral/list.txt', ...
+    '/full/behavioral/list.txt', 400, '/your/selected/seed_behavior_comb/lists/dir/', ...
+    '/your/HCP_restricted.csv', /your/HCP_unrestricted.csv')
+```
