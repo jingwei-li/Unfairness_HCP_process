@@ -1,6 +1,7 @@
 ## Run kernel ridge regression
 
 ```bash
+# bash
 cd ../KRR
 ./HCP_KRR_reg_cov_from_y.sh -outdir \
     /home/jingweil/storage/MyProject/fairAI/HCP_race/\ 
@@ -15,6 +16,7 @@ Use multi-level block permutation test to check which behavioral measures could 
 1. Accuracy metric: predictive COD
 
 ```bash
+# bash
 cd ../KRR
 proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
 ./HCP_KRR_predictable_behavior.sh -KRR_dir \
@@ -26,6 +28,7 @@ proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
 2. Accuracy metric: Pearson's correlation
 
 ```bash
+# bash
 cd ../KRR
 proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
 ./HCP_KRR_predictable_behavior.sh -KRR_dir \
@@ -37,6 +40,7 @@ proj_dir='/home/jingweil/storage/MyProject/fairAI/HCP_race'
 ## Calculate predictive COD and Pearson's correlation for matched AA and WA separately
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_KRR_acc_AAvsWA_matchedBehavior( fullfile(proj_dir, 'trained_model', ...
     'split_948sub_AA_matchedWA_rm_AA_outliers18', 'outputs', ...
@@ -57,6 +61,7 @@ HCP_KRR_acc_AAvsWA_matchedBehavior( fullfile(proj_dir, 'trained_model', ...
 ### Get behavioral measures whole correlation accuracy across all subjects was higher than 0.15
 
 ```matlab
+% matlab
 clear
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 model_dir = fullfile(proj_dir, 'trained_model', ...
@@ -86,6 +91,7 @@ CBIG_cell2text(bhvr_nm(idx), fullfile(model_dir, 'lists', ...
 1. Accuracy metric: predictive COD
 
 ```matlab
+% matlab
 clear
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 KRR_dir = fullfile(proj_dir, 'trained_model', ...
@@ -104,6 +110,7 @@ CBIG_cell2text(tmp, fullfile(KRR_dir, 'lists', 'COD_predictable_behaviors.txt'))
 2. Accuracy metric: Pearson's correlation
 
 ```matlab
+% matlab
 clear
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 KRR_dir = fullfile(proj_dir, 'trained_model', ...
@@ -124,6 +131,7 @@ CBIG_cell2text(tmp, fullfile(KRR_dir, 'lists', 'corr_predictable_behaviors.txt')
 ### Save the accuracies of only the predictable behavioral measures into a separate file
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 KRR_dir = fullfile(proj_dir, 'trained_model', ...
     'split_948sub_AA_matchedWA_rm_AA_outliers18', 'outputs', ...
@@ -157,6 +165,7 @@ HCP_KRR_acc_AAvsWA_matchedBehavior( KRR_dir, 400, 10, fullfile(proj_dir, ...
 1. Accuracy metric: predictive COD
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_PermTest_AAvsWA(fullfile(proj_dir, 'mat', 'AA_WA_diff', ...
     'pCOD_AAvsWA_reg_AgeSexMtEducIcvInc_from_y_predictable.mat'), fullfile(proj_dir, ...
@@ -169,6 +178,7 @@ HCP_PermTest_AAvsWA(fullfile(proj_dir, 'mat', 'AA_WA_diff', ...
 2. Accuracy metric: Pearson's correlation
  
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_PermTest_AAvsWA(fullfile(proj_dir, 'mat', 'AA_WA_diff', ...
     'corr_AAvsWA_reg_AgeSexMtEducIcvInc_from_y_predictable.mat'), fullfile(proj_dir, ...

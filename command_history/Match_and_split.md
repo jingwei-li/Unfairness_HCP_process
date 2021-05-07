@@ -2,6 +2,7 @@
 Command to add paths in matlab:
 
 ```matlab
+% matlab
 cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process
 HCP_addpath
 ```
@@ -9,6 +10,7 @@ HCP_addpath
 ## Step 1: Split AA into 10 folds
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 for seed = 1:400
     HCP_split_AA_rm_hardtomatch(fullfile(proj_dir, 'scripts', 'lists', 'subjects_wIncome_948.txt'), ...
@@ -20,6 +22,7 @@ end
 ## Step 2: Within each AA fold, find matched WA
 
 ```bash
+# bash
 ssh headnode
 cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process/match_split
 ./HCP_match_WA_with_AAfolds.sh -max_seed 400 -outdir \
@@ -29,6 +32,7 @@ cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process/match_spli
 ## Step 3: Check if the difference in demographic & behavioral distributions between AA & WA were significant
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_AA_WA_match_diff(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18'), ...
     fullfile(proj_dir, 'mat', 'split_WA_rm_AA_outliers18'), ...
@@ -42,6 +46,7 @@ HCP_AA_WA_match_diff(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18'), ..
 For each behavioral measures, the first 40 random splits with matched AA & WA were selected. The selected (seed, behavior) combinations were saved as text lists by the following script:
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_select_matched_seeds(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18'), ...
     fullfile(proj_dir, 'mat', 'split_WA_rm_AA_outliers18'), ...
@@ -53,6 +58,7 @@ HCP_select_matched_seeds(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18')
 ## Step 4: split the remaining subjects
 
 ```bash
+# bash
 ssh headnode
 cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process/match_split
 ./HCP_split_except_selectedAAWA.sh -max_seed 400 -outdir \
@@ -62,6 +68,7 @@ cd ~/storage/MyProject/fairAI/HCP_race/scripts/Unfairness_HCP_process/match_spli
 ## Step 5: combine the splits of AA, splits of matched WA, and splits of other subjects
 
 ```matlab
+% matlab
 for seed = 1:400
     proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
     matched_bhvr_ls = fullfile(proj_dir, 'mat', 'split_WA_rm_AA_outliers18', ...
@@ -83,6 +90,7 @@ end
 ## Step 6: compare variances of true behavioral scores between matched AA and WA (Levene's test)
 
 ```matlab
+% matlab
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 HCP_pheno_var_AAvsWA_matched(fullfile(proj_dir, 'mat', 'split_AA_948_rm_outliers18'), ...
     fullfile(proj_dir, 'mat', 'split_WA_rm_AA_outliers18'), ...

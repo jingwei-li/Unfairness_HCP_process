@@ -1,6 +1,7 @@
 ## Run kernel ridge regression
 
 ```bash
+# bash
 cd ../KRR
 ./HCP_KRR_reg_cov_from_FC.sh -outdir \
     /home/jingweil/storage/MyProject/fairAI/HCP_race/\ 

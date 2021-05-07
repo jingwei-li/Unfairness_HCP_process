@@ -2,7 +2,7 @@ This folder contains the scripts used for comparing prediction accuracies betwee
 
 ## Calculate accuracy metrics for matched AA and WA separately
 
-Related function: `HCP_KRR_acc_AAvsWA_matchedBehavior.m`. Example:
+Related function: `HCP_KRR_acc_AAvsWA_matchedBehavior.m`. Example (matlab):
 
 ```matlab
 HCP_KRR_acc_AAvsWA_matchedBehavior( '/your/kernel/regression/output/dir/', 400, 10, ...
@@ -14,7 +14,7 @@ HCP_KRR_acc_AAvsWA_matchedBehavior( '/your/kernel/regression/output/dir/', 400, 
 
 ## Statistical test for the accuracy difference between AA and WA
 
-Related function: `HCP_PermTest_AAvsWA.m`
+Related function: `HCP_PermTest_AAvsWA.m`. Example (matlab):
 
 ```matlab
 HCP_PermTest_AAvsWA('/AAvsWA/accuracy.mat', '/focused/behavioral/list.txt', ...

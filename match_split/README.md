@@ -4,7 +4,7 @@ This folder contains the scripts for data split and matching.
 
 Related scripts: `HCP_split_AA_rm_hardtomatch`.
 
-Example:
+Example (matlab):
 
 ```matlab
 for seed = 1:400
@@ -19,7 +19,8 @@ end
 
 Related scripts: `HCP_match_WA_with_AAfolds.m`, `HCP_match_WA_with_AAfolds.sh`. The `.sh` file is the wrapper of the `.m` file. The wrapper script submits jobs to the CSC HPC, but external users can easily replace the job-submission line with their own command.
 
-Example:
+Example (bash):
+
 ```bash
 ./HCP_match_WA_with_AAfolds.sh -max_seed 400  -subj_ls <your_subject_list>  -FD_txt <your_FD_file>  \
     -DV_txt <your_DVARS_file>  -bhvr_ls_rstr <your_restricted_behavioral_list>  -bhvr_ls_unrstr \
@@ -32,7 +33,8 @@ Example:
 
 Related script: `HCP_AA_WA_match_diff.m`.
 
-Example:
+Example (matlab):
+
 ```matlab
 HCP_AA_WA_match_diff('/your/AA/splits/dir', '/your/selected/WA/dir', '/your/full/subject_list.txt', ...
     '/your/FD.txt', '/your/DVARS.txt', '/your/restricted_behavioral_list.txt', ...
@@ -51,7 +53,8 @@ HCP_select_matched_seeds('/your/AA/splits/dir', '/your/selected/WA/dir', ...
 
 Related scripts: `HCP_split_except_selectedAAWA.sh`, `HCP_split_except_selectedAAWA.m`.
 
-Example:
+Example (bash):
+
 ```bash
 HCP_split_except_selectedAAWA.sh -max_seed 400 -subj_ls <your_subject_list> -bhvr_ls \
     <your_behavioral_list> -AAsplit_stem <your_AA_split_dir>/split_seed -WAsplit_stem \
@@ -64,7 +67,8 @@ The purpose of this step is to generate one `.mat` file per random seed per beha
 
 Related script: `HCP_combine_AA_WA_others_folds.m`.
 
-Example:
+Example (matlab):
+
 ```matlab
 for seed = 1:400
     HCP_combine_AA_WA_others_folds('/split/AA/of/current/seed.mat', ...
@@ -78,7 +82,7 @@ end
 
 Related script: `HCP_pheno_var_AAvsWA_matched.m`.
 
-Example:
+Example (matlab):
 
 ```matlab
 HCP_pheno_var_AAvsWA_matched('/your/matched/AA/splits/dir/', ...

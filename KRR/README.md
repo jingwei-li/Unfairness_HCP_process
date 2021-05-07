@@ -4,7 +4,7 @@ This folder contains the wrapper scripts for applying kernel ridge regression to
 
 The two top-level bash wrappers are `HCP_KRR_reg_cov_from_y.sh` and `HCP_KRR_reg_cov_from_FC.sh`, for regressing confounding variables from behavioral scores and from functional connectivities respectively.
 
-For usage, taking `HCP_KRR_reg_cov_from_y.sh` as an example:
+For usage, taking `HCP_KRR_reg_cov_from_y.sh` as an example (bash):
 
 ```bash
 ./HCP_KRR_reg_cov_from_y.sh -outdir '/your/output/dir/' -subj_ls '/your/subject/list.txt' \
@@ -19,7 +19,7 @@ Both bash scripts call other scripts in this folder: `HCP_KRR_workflow_optimize_
 
 Use multi-level block permutation test to check which behavioral measures could achieve higher-than-chance prediction accuracies across all test subjects (including all ethnicies/races, not only AA and WA).
 
-Example:
+Example (bash):
 
 ```bash
 ./HCP_predictable_behavior.sh -KRR_dir '/your/KRR/output/dir/' -maxKRR_iter 400 \
