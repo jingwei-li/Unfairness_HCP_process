@@ -66,6 +66,11 @@ seed_counts = zeros(1, n_mtch);
 COD_AA = nan(nseeds, n_mtch);  COD_WA = COD_AA;  COD_comb = COD_AA;
 ss_res_AA_all = nan(nseeds, n_mtch);  ss_res_WA_all = ss_res_AA_all;  
 ss_res_comb_all = ss_res_AA_all;  ss_total_all = ss_res_AA_all;
+yt_AA_all = cell(nseeds, n_mtch);  yp_AA_all = yt_AA_all;
+yt_WA_all = yt_AA_all;  yp_WA_all = yt_WA_all;
+yt_train_AA_all = yt_AA_all;  yt_train_WA_all = yt_AA_all;
+yt_AA_match_all = yt_AA_all;  yp_AA_match_all = yt_AA_all;
+yt_WA_match_all = yt_AA_all;  yp_WA_match_all = yt_AA_all;
 for seed = 1:max_seed
     txt_name = fullfile(use_seed_bhvr_ldir, ['usable_behaviors_seed' num2str(seed) '.txt']);
     if(exist(txt_name, 'file'))
@@ -98,8 +103,8 @@ for seed = 1:max_seed
             ['final_result_' mtch_bhvr{b} '.mat']);
         curr_result = load(curr_result);
 
-        yt_AA = []; yp_AA = []; yt_train_AA = [];
-        yt_WA = []; yp_WA = []; yt_train_WA = [];
+        yt_AA = []; yp_AA = []; yt_train_AA = []; yt_AA_match = []; yp_AA_match = [];
+        yt_WA = []; yp_WA = []; yt_train_WA = []; yt_WA_match = []; yp_WA_match = [];
         for fold = 1:num_test_folds
             load(fullfile(KRR_dir, ['randseed_' num2str(seed)], mtch_bhvr{b}, 'y', ...
                 ['fold_' num2str(fold)], ['y_regress_' mtch_bhvr{b} '.mat']))
@@ -113,6 +118,12 @@ for seed = 1:max_seed
             yt_train_AA = [yt_train_AA; curr_yt_train_AA];
             curr_yp_AA = curr_result.y_predict_concat(Aind);
             yp_AA = [yp_AA; curr_yp_AA];
+
+            [~,~, Aind_match] = intersect(AA_fold.sub_perfold{fold}, subjects, 'stable');
+            curr_yt_AA_match = y_resid(Aind_match);
+            curr_yp_AA_match = curr_result.y_predict_concat(Aind_match);
+            yt_AA_match = [yt_AA_match; curr_yt_AA_match];
+            yp_AA_match = [yp_AA_match; curr_yp_AA_match];
             
             [~, Wind] = intersect(subjects, best_assign{b_ind(b)}{fold}, 'stable');
             curr_yt_WA = y_resid(Wind);
@@ -123,6 +134,12 @@ for seed = 1:max_seed
             yt_train_WA = [yt_train_WA; curr_yt_train_WA];
             curr_yp_WA = curr_result.y_predict_concat(Wind);
             yp_WA = [yp_WA; curr_yp_WA];
+
+            [~,~, Wind_match] = intersect(best_assign{b_ind(b)}{fold}, subjects, 'stable');
+            curr_yt_WA_match = y_resid(Wind_match);
+            curr_yp_WA_match = curr_result.y_predict_concat(Wind_match);
+            yt_WA_match = [yt_WA_match; curr_yt_WA_match];
+            yp_WA_match = [yp_WA_match; curr_yp_WA_match];
 
             clear y_orig y_resid
         end
@@ -146,15 +163,34 @@ for seed = 1:max_seed
         corr_WA(seed_counts(b), b) = CBIG_corr(yp_WA, yt_WA);
         corr_comb(seed_counts(b), b) = CBIG_corr([yp_AA; yp_WA], [yt_AA; yt_WA]);
 
+        yt_AA_all{seed_counts(b), b} = yt_AA;
+        yp_AA_all{seed_counts(b), b} = yp_AA;
+        yt_WA_all{seed_counts(b), b} = yt_WA;
+        yp_WA_all{seed_counts(b), b} = yp_WA;
+        yt_train_AA_all{seed_counts(b), b} = yt_train_AA;
+        yt_train_WA_all{seed_counts(b), b} = yt_train_WA;
+        yt_AA_match_all{seed_counts(b), b} = yt_AA_match;
+        yp_AA_match_all{seed_counts(b), b} = yp_AA_match;
+        yt_WA_match_all{seed_counts(b), b} = yt_WA_match;
+        yp_WA_match_all{seed_counts(b), b} = yp_WA_match;
+
         clear sub_fold curr_result
     end
 
     clear AA_fold best_assign cost_history highest_cost
 end
 
-save(out_pCOD, 'COD_AA', 'COD_WA', 'COD_comb', 'ss_res_AA_all', 'ss_res_WA_all', ...
-    'ss_res_comb_all', 'ss_total_all')
-save(out_corr, 'corr_AA', 'corr_WA', 'corr_comb')
+if(~isempty(out_pCOD))
+    save(out_pCOD, 'COD_AA', 'COD_WA', 'COD_comb', 'ss_res_AA_all', 'ss_res_WA_all', ...
+        'ss_res_comb_all', 'ss_total_all', 'yt_AA_all', 'yt_WA_all', 'yp_AA_all', ...
+        'yp_WA_all', 'yt_train_AA_all', 'yt_train_WA_all', 'yt_AA_match_all', ...
+        'yp_AA_match_all', 'yt_WA_match_all', 'yp_WA_match_all')
+end
+if(~isempty(out_corr))
+    save(out_corr, 'corr_AA', 'corr_WA', 'corr_comb', 'yt_AA_all', 'yt_WA_all', ...
+        'yp_AA_all', 'yp_WA_all', 'yt_train_AA_all', 'yt_train_WA_all', ...
+        'yt_AA_match_all', 'yp_AA_match_all', 'yt_WA_match_all', 'yp_WA_match_all')
+end
 
 %% check which behavioral measures have positive COD
 if(~exist(fullfile(KRR_dir, 'lists', 'pCOD_union_pos_behaviors.txt'), 'file'))
