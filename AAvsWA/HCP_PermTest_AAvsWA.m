@@ -2,7 +2,24 @@ function HCP_PermTest_AAvsWA(group_diff, bhvr_ls, metric, outmat)
 
 % HCP_PermTest_AAvsWA(group_diff, bhvr_ls, metric, outmat)
 %
-% 
+% Permutation test for accuracy difference between matched AA and WA.
+%
+% Inputs:
+% - group_diff
+%   Full path of a .mat file. This file contains the prediction accuracies of matched AA amd 
+%   WA separately. It is the output file of `HCP_KRR_acc_AAvsWA_matchedBehavior.m`.
+%
+% - bhvr_ls
+%   List of the focused behavioral measures (full path).
+%
+% - metric
+%   String, accuracy metric. Choose from 'predictive_COD' or 'corr'.
+%
+% - outmat
+%   Output .mat file, storing the information of which behavioral measures showed significant
+%   accuracy difference between matched AA and WA.
+%
+% Author: Jingwei Li
 
 alpha = 0.5;
 nseeds = 40;
