@@ -14,10 +14,12 @@ First, this repository relies on multiple utility functions in the Computational
 
 After that, this repository should be used as the following steps:
 
-1. Follow the README in `match_split` folder to find matched AA and WA pairs, and split all subjects into multiple folds to facilitate the nested cross-validation procedure for later steps.
+1. Run `HCP_addpath` when everytime you open a new matlab session, to add all subfolders of the current repository into your matlab paths.
 
-2. Follow the README in `KRR` folder to run kernel ridge regression in a nested cross-validation manner as split in step 1.
+2. Follow the README in `match_split` folder to find matched AA and WA pairs, and split all subjects into multiple folds to facilitate the nested cross-validation procedure for later steps.
 
-3. Follow the README in `AAvsWA` folder to calculate the out-of-sample prediction accuracy of matched AA and WA, and test the significancy of the accuracy difference.
+3. Follow the README in `KRR` folder to run kernel ridge regression in a nested cross-validation manner as split in step 1.
 
-4. Follow the README in `plot` folder to plot the accuracy differencies.
+4. Follow the README in `AAvsWA` folder to calculate the out-of-sample prediction accuracy of matched AA and WA, and test the significancy of the accuracy difference.
+
+5. Follow the README in `plot` folder to plot the accuracy differencies.
