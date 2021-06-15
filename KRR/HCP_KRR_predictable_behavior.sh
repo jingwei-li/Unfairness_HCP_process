@@ -19,7 +19,7 @@ maxKRR_iter=400
 Nperm=1000
 
 main() {
-    cmd="matlab -nodesktop -nodisplay -nojvm -r \" addpath $DIR; \
+    cmd="matlab -nodesktop -nodisplay -nojvm -r \" cd(fileparts('$DIR')); HCP_addpath; \
         HCP_KRR_predictable_behaviors('$KRR_dir', $maxKRR_iter, $Nperm, '$test_metric', \
         '$intrim_csv', '$outmat', '$rstr_csv', '$subj_ls', '$bhvr_ls', '$colloq_ls'); \
         exit; \" "

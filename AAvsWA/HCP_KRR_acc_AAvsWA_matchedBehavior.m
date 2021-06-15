@@ -195,6 +195,7 @@ end
 %% check which behavioral measures have positive COD
 if(~exist(fullfile(KRR_dir, 'lists', 'pCOD_union_pos_behaviors.txt'), 'file'))
     mean_COD_comb = nanmean(COD_comb, 1);
+    mkdir(fullfile(KRR_dir, 'lists'))
     CBIG_cell2text(mtch_bhvr(mean_COD_comb>0), fullfile(KRR_dir, 'lists', ...
         'pCOD_comb_pos_behaviors.txt'))
 
