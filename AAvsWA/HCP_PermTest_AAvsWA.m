@@ -46,17 +46,21 @@ null_acc_AA = nan(nseeds, nbhvr, nperm);  null_acc_WA = null_acc_AA;
 for seed = 1:nseeds
     for b = 1:nbhvr
         for i = 1:nperm
+            % indices of subjects to exchange ethnic/racial group labels
             curr_ind = round(rand(length(grpdif.yt_AA_all{seed, b}), 1));
+            % randomly shuffle the ordering of WA subjects
+            shuffle = datasample(1:length(grpdif.yt_WA_match_all{seed,b}), ...
+                length(grpdif.yt_WA_match_all{seed,b}), 'replace', false);
 
             null_yt_AA = grpdif.yt_AA_match_all{seed, b};
-            null_yt_AA(curr_ind==1) = grpdif.yt_WA_match_all{seed, b}(curr_ind==1);
+            null_yt_AA(curr_ind==1) = grpdif.yt_WA_match_all{seed, b}(shuffle(curr_ind==1));
             null_yp_AA = grpdif.yp_AA_match_all{seed, b};
-            null_yp_AA(curr_ind==1) = grpdif.yp_WA_match_all{seed, b}(curr_ind==1);
+            null_yp_AA(curr_ind==1) = grpdif.yp_WA_match_all{seed, b}(shuffle(curr_ind==1));
 
             null_yt_WA = grpdif.yt_WA_match_all{seed, b};
-            null_yt_WA(curr_ind==1) = grpdif.yt_AA_match_all{seed, b}(curr_ind==1);
+            null_yt_WA(shuffle(curr_ind==1)) = grpdif.yt_AA_match_all{seed, b}(curr_ind==1);
             null_yp_WA = grpdif.yp_WA_match_all{seed, b};
-            null_yp_WA(curr_ind==1) = grpdif.yp_AA_match_all{seed, b}(curr_ind==1);
+            null_yp_WA(shuffle(curr_ind==1)) = grpdif.yp_AA_match_all{seed, b}(curr_ind==1);
 
             [null_acc_AA(seed, b, i), null_acc_WA(seed, b, i)] = compute_null(null_yt_AA, ...
                 null_yt_WA, null_yp_AA, null_yp_WA, metric, ...
