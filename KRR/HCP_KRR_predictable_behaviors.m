@@ -127,7 +127,12 @@ function HCP_KRR_predictable_behaviors(KRR_dir, maxKRR_iter, Nperm, test_metric,
             continue
         end
         opt = load(opt_fname);
-        load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM', 'FSM_corr.mat'))
+
+        flag = exist(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM'), 'dir');
+        if(flag)
+            load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM', 'FSM_corr.mat'));
+        end
+
         load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, ...
             ['no_relative_10_fold_sub_list_' bhvr_nm{b} '.mat']));
         Nfolds = length(sub_fold);
@@ -147,8 +152,19 @@ function HCP_KRR_predictable_behaviors(KRR_dir, maxKRR_iter, Nperm, test_metric,
             N_train = length(find(train_ind));
             N_test = length(find(test_ind));
             
-            K_train = FSM(train_ind, train_ind);
-            K_test = FSM(test_ind, train_ind);
+            if(flag)
+                K_train = FSM(train_ind, train_ind);
+                K_test = FSM(test_ind, train_ind);
+            else
+                load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM_innerloop', ...
+                    ['fold_' num2str(f)], 'FSM_corr.mat'))
+                K_train = FSM;
+                clear FSM
+                load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM_test', ...
+                    ['fold_' num2str(f)], 'FSM_corr.mat'))
+                K_test = FSM(test_ind, train_ind)
+                clear FSM
+            end
             
             % compute the part of parameters that are not dependent on y
             % so that they are be shared across all permutations
