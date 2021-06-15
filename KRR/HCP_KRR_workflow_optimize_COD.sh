@@ -37,6 +37,7 @@ main() {
     echo "RSFC_file = $RSFC_file" >> $LF
     echo "y_name = $y_name" >> $LF
     echo "cov_ls = $cov_ls" >> $LF
+    echo "cov_X_ls = $cov_X_ls" >> $LF
     echo "FD_file = $FD_file" >> $LF
     echo "DV_file = $DV_file" >> $LF
     echo "outdir = $outdir" >> $LF
@@ -51,8 +52,14 @@ main() {
     # Call matlab function
     ##########################
     matlab -nodesktop -nosplash -nodisplay -r " addpath $DIR; HCP_KRR('$rstr_csv', '$unrstr_csv', '$FS_csv', \
-        '$subj_ls', '$RSFC_file', '$y_name', '$cov_ls', '$FD_file', '$DV_file', '$outdir', '$num_test_folds', \
-        '$num_inner_folds', '$seed', '$with_bias', '', '$lambda_set_file', '', '$metric'); exit; " >> $LF 2>&1
+        '$subj_ls', '$RSFC_file', '$y_name', '$cov_ls', '$cov_X_ls', '$FD_file', '$DV_file', '$outdir', \
+        '$num_test_folds', '$num_inner_folds', '$seed', '$with_bias', '', '$lambda_set_file', '', '$metric'); \
+        exit; " >> $LF 2>&1
+
+    #if [ -f $outdir/randseed_${seed}/${y_name}/final_result_${y_name}.mat ]; then
+    #    rm -r $outdir/randseed_${seed}/${y_name}/FSM_innerloop/fold_*/FSM*.mat
+    #    rm -r $outdir/randseed_${seed}/${y_name}/FSM_test/fold_*/FSM*.mat
+    #fi
 }
 
 #############################
@@ -73,7 +80,10 @@ REQUIRED ARGUMENTS:
     -y_name          <y_name>         : The behavioral name to be predicted. The name should correspond to one of 
                                         the headers in either rstr_csv or unrstr_csv.
     -cov_ls          <cov_ls>         : A text file (full path) containing the confounding variables to be 
-                                        regressed out.
+                                        regressed out from behavioral measures.
+    -cov_X_ls        <cov_X_ls>       : A text file (full path) containing the confounding variables to be 
+                                        regressed out from RSFC. Pass in NONE if nothing should be regressed from
+                                        RSFC.
     -FD_file         <FD_file>        : A text file (full path) containing the framewise displacement for each 
                                         subject in <subj_ls>. Each line in this file corresponds to one subject.
     -DV_file         <DV_file>        : A text file (full path) containing the DVARS of each subject in <subj_ls>. 
@@ -98,8 +108,8 @@ OPTIONAL ARGUMENTS:
 EXAMPLE:
     $DIR/HCP_KRR_workflow_optimize_COD.sh \\
         -subj_ls '/your/subject/list.txt' -RSFC_file '/your/RSFC.mat' -y_name '<curr_behavioral_name>' -cov_ls \\
-        '/your/confounds/list.txt' -FD_file '/your/FD.txt' -DV_file '/your/DVARS.txt' -outdir '/your/output/dir/' \\
-        -seed <current_seed> -lambda_set_file $DIR/lambda_0_20.mat \\
+        '/your/confounds/list.txt' -cov_X_ls '/your/confounds/list.txt' -FD_file '/your/FD.txt' -DV_file \\
+        '/your/DVARS.txt' -outdir '/your/output/dir/' -seed <current_seed> -lambda_set_file $DIR/lambda_0_20.mat \\
         -rstr_csv '/your/restricted_HCP.csv' -unrstr_csv '/your/unrestricted_HCP.csv' -FS_csv '/your/FreeSurfer_HCP.csv'
 " 1>&2; exit 1; }
 
@@ -134,6 +144,9 @@ while [[ $# -gt 0 ]]; do
             shift;;
         -cov_ls)
             cov_ls=$1;
+            shift;;
+        -cov_X_ls)
+            cov_X_ls=$1;
             shift;;
         -FD_file)
             FD_file=$1
@@ -189,7 +202,11 @@ if [ "$y_name" == "" ]; then
     exit 1
 fi
 if [ "$cov_ls" == "" ]; then
-    echo "ERROR: confounding variable list not specified."
+    echo "ERROR: list of confounding variables to be regressed out from behavioral measures not specified."
+    exit 1
+fi
+if [ "$cov_X_ls" == "" ]; then
+    echo "ERROR: list of confounding variables to be regressed out from RSFC not specified."
     exit 1
 fi
 if [ "$FD_file" == "" ]; then
