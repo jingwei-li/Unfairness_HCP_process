@@ -53,6 +53,13 @@ end
 f = figure;
 hold on
 step = 0.3; width = 0.1;
+if(nbhvr<20)
+    med_circle = 16;
+    med_line = 2;
+else
+    med_circle = 3;
+    med_line = 0.5;
+end
 
 vio{1} = violinplot(squeeze(data(1,:,:)), [], [1:nbhvr]-step, 'ViolinColor', colormat(1,:), 'ShowMean', true, 'Width', width);
 vio{2} = violinplot(squeeze(data(2,:,:)), [], [1:nbhvr], 'ViolinColor', colormat(2,:), 'ShowMean', true, 'Width', width);
@@ -62,7 +69,8 @@ for i = 1:3
     for b = 1:nbhvr
         vio{i}(b).ViolinPlot.LineWidth = 2;
         vio{i}(b).ScatterPlot.Marker = '.';
-        vio{i}(b).MedianPlot.SizeData = 15;
+        vio{i}(b).MedianPlot.SizeData = med_circle;
+        vio{i}(b).MedianPlot.LineWidth = med_line;
     end
 end
 
