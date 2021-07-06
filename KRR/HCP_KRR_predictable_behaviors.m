@@ -111,14 +111,14 @@ function HCP_KRR_predictable_behaviors(KRR_dir, maxKRR_iter, Nperm, test_metric,
     
     rmpath(fullfile(getenv('CBIG_CODE_DIR'), 'external_packages', 'matlab', 'non_default_packages', 'palm', 'palm-alpha109'))
     
-    end
+end
     
     
     
     
     
     
-    function KRR_perm(b, KRR_dir, maxKRR_iter, Nperm, Pset, bhvr_nm, metrics)
+function KRR_perm(b, KRR_dir, maxKRR_iter, Nperm, Pset, bhvr_nm, metrics)
     
     for i = 1:maxKRR_iter
         opt_fname = fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, ...
@@ -192,4 +192,4 @@ function HCP_KRR_predictable_behaviors(KRR_dir, maxKRR_iter, Nperm, test_metric,
         save(acc_out, 'stats_perm')
     end
     
-    end
+end
