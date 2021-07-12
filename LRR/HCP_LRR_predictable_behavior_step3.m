@@ -1,4 +1,4 @@
-function HCP_LRR_predictable_behavior_step3(LRR_dir, maxLRR_iter, test_metric, outmat, bhvr_ls, colloq_ls)
+function HCP_LRR_predictable_behavior_step3(LRR_dir, maxLRR_iter, test_metric, outmat, bhvr_ls, colloq_ls, Nperm)
 
 % HCP_LRR_predictable_behavior_step3(LRR_dir, maxLRR_iter, test_metric, outmat, bhvr_ls, colloq_ls)
 %
@@ -38,7 +38,7 @@ avg_null_stats = []
 for b = 1:nbhvr
     curr_avg_stats = [];
     curr_avg_null_stats = [];
-    for i = 1:maxKRR_iter
+    for i = 1:maxLRR_iter
         opt_fname = fullfile(LRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'results', 'optimal_acc', ...
             [bhvr_nm{b} '_final_acc.mat']);
         if(~exist(opt_fname, 'file'))
