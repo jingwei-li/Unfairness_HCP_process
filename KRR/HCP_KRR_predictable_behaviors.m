@@ -69,7 +69,7 @@ function HCP_KRR_predictable_behaviors(KRR_dir, maxKRR_iter, Nperm, test_metric,
     %% calculate p value for each behavior
     p_perm = zeros(nbhvr, 1);
     avg_stats = [];
-    avg_null_stats = []
+    avg_null_stats = [];
     for b = 1:nbhvr
         curr_avg_stats = [];
         curr_avg_null_stats = [];
@@ -162,7 +162,7 @@ function KRR_perm(b, KRR_dir, maxKRR_iter, Nperm, Pset, bhvr_nm, metrics)
                 clear FSM
                 load(fullfile(KRR_dir, ['randseed_' num2str(i)], bhvr_nm{b}, 'FSM_test', ...
                     ['fold_' num2str(f)], 'FSM_corr.mat'))
-                K_test = FSM(test_ind, train_ind)
+                K_test = FSM(test_ind, train_ind);
                 clear FSM
             end
             
