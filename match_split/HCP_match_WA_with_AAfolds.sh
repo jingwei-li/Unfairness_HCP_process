@@ -17,6 +17,7 @@ outstem='split_seed'
 restricted_csv=        # use matlab function's default
 unrestricted_csv=      # use matlab function's default
 FS_csv=                # use matlab function's default
+match_ls=              # use matlab function's default
 
 ########################################
 # main commands to be submitted to jobs
@@ -68,6 +69,7 @@ ARGUMENTS:
     -rstr_csv       <rstr_csv>      : Full path of the HCP restricted CSV file.
     -unrstr_csv     <unrstr_csv>    : Full path of the HCP unrestricted CSV file.
     -FS_csv         <FS_csv>        : Full path of the HCP FreeSurfer CSV file.
+    -match_ls       <match_ls>      : Full path of the list of variables to be matched.
 
 EXAMPLE:
 " 1>&2; exit 1; }
@@ -84,42 +86,19 @@ while [[ $# -gt 0 ]]; do
 	flag=$1; shift;
 	
 	case $flag in
-        -max_seed)
-            max_seed=$1
-            shift;;
-        -subj_ls)
-            subj_ls=$1
-            shift;;
-        -FD_txt)
-            FD_txt=$1
-            shift;;
-        -DV_txt)
-            DV_txt=$1
-            shift;;
-        -bhvr_ls_rstr)
-            bhvr_ls_rstr=$1
-            shift;;
-        -bhvr_ls_unrstr)
-            bhvr_ls_unrstr=$1
-            shift;;
-        -AA_fold_stem)
-            AA_fold_stem=$1
-            shift;;
-        -outdir)
-            outdir=$1
-            shift;;
-        -outstem)
-            outstem=$1
-            shift;;
-        -rstr_csv)
-            restricted_csv=$1
-            shift;;
-        -unrstr_csv)
-            unrestricted_csv=$1
-            shift;;
-        -FS_csv)
-            FS_csv=$1
-            shift;;
+        -max_seed) max_seed=$1; shift;;
+        -subj_ls) subj_ls=$1; shift;;
+        -FD_txt) FD_txt=$1; shift;;
+        -DV_txt) DV_txt=$1; shift;;
+        -bhvr_ls_rstr) bhvr_ls_rstr=$1; shift;;
+        -bhvr_ls_unrstr) bhvr_ls_unrstr=$1; shift;;
+        -AA_fold_stem) AA_fold_stem=$1; shift;;
+        -outdir) outdir=$1; shift;;
+        -outstem) outstem=$1; shift;;
+        -rstr_csv) restricted_csv=$1; shift;;
+        -unrstr_csv) unrestricted_csv=$1; shift;;
+        -FS_csv) FS_csv=$1; shift;;
+        -match_ls) match_ls=$1; shift;;
         *) 
 			echo "Unknown flag $flag"
 			usage; 1>&2; exit 1

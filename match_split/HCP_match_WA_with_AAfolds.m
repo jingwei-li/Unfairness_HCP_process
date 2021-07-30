@@ -1,8 +1,8 @@
 function HCP_match_WA_with_AAfolds(subj_ls, FD_txt, DV_txt, bhvr_ls_rstr, bhvr_ls_unrstr, ...
-    AA_fold_mat, outdir, outstem, restricted_csv, unrestricted_csv, FS_csv)
+    AA_fold_mat, outdir, outstem, restricted_csv, unrestricted_csv, FS_csv, match_ls)
 
 % HCP_match_WA_with_AAfolds(subj_ls, FD_txt, DV_txt, bhvr_ls_rstr, bhvr_ls_unrstr, ...
-%     AA_fold_mat, outdir, outstem, restricted_csv, unrestricted_csv, FS_csv)
+%     AA_fold_mat, outdir, outstem, restricted_csv, unrestricted_csv, FS_csv, match_ls)
 %
 % Match white Americans with African Americans within each fold.
 %
@@ -39,6 +39,10 @@ function HCP_match_WA_with_AAfolds(subj_ls, FD_txt, DV_txt, bhvr_ls_rstr, bhvr_l
 %     cost of intracranial volume. Default (on CSC HPC):
 %     '/mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/Morphometricity/Anat_Sim_Matrix/...
 %     FS_jingweili_5_9_2017_2_2_24.csv'
+%   - match_ls (optional)
+%     Full path of the list of variables which need to be matched. If not passed in, the
+%     matched variables include age, gender, FD, DVARS, education, ICV and behavioral
+%     score. If 'NONE' is passed in, only behavioral score is matched.
 %
 % Author: Jingwei Li
 
@@ -55,6 +59,13 @@ end
 if(~exist('FS_csv', 'var') || isempty(FS_csv))
     FS_csv = fullfile(HCP_dir, 'scripts', 'Morphometricity', 'Anat_Sim_Matrix', ...
         'FS_jingweili_5_9_2017_2_2_24.csv');
+end
+if(~exist('match_ls', 'var') || isempty(match_ls))
+    match_var = {'age', 'educ', 'gender', 'FD', 'DVARS', 'ICV'};
+elseif(strcmpi(match_ls, 'none'))
+    match_var = [];
+else
+    match_var = CBIG_text2cell(match_ls);
 end
 
 %% read subject IDs and behavioral names
@@ -145,8 +156,26 @@ for b = b_start:nbehav
     end
     fprintf('b: %d\n', b)
     
-    
-    metric = [age_Educ sex FD DV ICV bhvr_val(:,b)];
+    metric = [];
+    for mv = 1:length(match_var)
+        switch match_var{mv}
+        case 'age'
+            metric = [metric age_Educ(:,1)];
+        case 'educ'
+            metric = [metric age_Educ(:,2)];
+        case 'gender'
+            metric = [metric sex];
+        case 'FD'
+            metric = [metric FD];
+        case 'DVARS'
+            metric = [metric DV];
+        case 'ICV'
+            metric = [metric ICV];
+        otherwise
+            error('Unknown matched variable.')
+        end
+    end
+    metric = [metric bhvr_val(:,b)];
     metric = metric - mean(metric,1);
     metric = metric ./ sqrt(sum(metric.^2,1));
     AA_metric = metric(AA_ind,:);
