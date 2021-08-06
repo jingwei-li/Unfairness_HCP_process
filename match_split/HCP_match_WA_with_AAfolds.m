@@ -157,12 +157,14 @@ for b = b_start:nbehav
     fprintf('b: %d\n', b)
     
     metric = [];
+    weigh_idx = [];
     for mv = 1:length(match_var)
         switch match_var{mv}
         case 'age'
             metric = [metric age_Educ(:,1)];
         case 'educ'
             metric = [metric age_Educ(:,2)];
+            weigh_idx = [weigh_idx mv]
         case 'gender'
             metric = [metric sex];
         case 'FD'
@@ -171,11 +173,15 @@ for b = b_start:nbehav
             metric = [metric DV];
         case 'ICV'
             metric = [metric ICV];
+            weigh_idx = [weigh_idx mv]
         otherwise
             error('Unknown matched variable.')
         end
     end
     metric = [metric bhvr_val(:,b)];
+    if(~isempty(match_var))
+        weigh_idx = [weigh_idx length(match_var)+1];
+    end
     metric = metric - mean(metric,1);
     metric = metric ./ sqrt(sum(metric.^2,1));
     AA_metric = metric(AA_ind,:);
@@ -257,7 +263,7 @@ for b = b_start:nbehav
             WA_metric = metric(curr_WA_ind, :);
             WA_metric = reshape(WA_metric, [1 size(WA_metric)]);
             cost_mat = bsxfun(@minus, AA_metric(fold_ind,:,:), WA_metric);
-            cost_mat(:,:,[2 6 7]) = cost_mat(:,:,[2 6 7]) .*2;  % put on weights for Educ, ICV, and behavior
+            cost_mat(:,:,weigh_idx) = cost_mat(:,:,weigh_idx) .*2;  % put on weights for Educ, ICV, and behavior
             cost_mat = sum(abs(cost_mat),3);
             [assign_WA, cost_fold(fold)] = munkres(cost_mat);
             if(any(assign_WA==0))

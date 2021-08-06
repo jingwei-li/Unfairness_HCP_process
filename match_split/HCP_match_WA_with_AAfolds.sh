@@ -25,12 +25,13 @@ match_ls=              # use matlab function's default
 main(){
     work_dir=$outdir/logs
     mkdir $work_dir
-    jname='match_WA_AA'
 
-    for seed in $(seq 1 1 $max_seed); do
+    #for seed in $(seq 1 1 $max_seed); do
+    for seed in 9 294; do
+        jname="match_WA_AA_$seed"
         cmd="matlab -nodesktop -nosplash -nodisplay -r \" addpath('$DIR'); HCP_match_WA_with_AAfolds('$subj_ls', \
             '$FD_txt', '$DV_txt', '$bhvr_ls_rstr', '$bhvr_ls_unrstr', ['$AA_fold_stem' '$seed' '.mat'], '$outdir', \
-            ['$outstem' '$seed'], '$restricted_csv', '$unrestricted_csv', '$FS_csv'); exit;\" "
+            ['$outstem' '$seed'], '$restricted_csv', '$unrestricted_csv', '$FS_csv', '$match_ls'); exit;\" "
         $CBIG_CODE_DIR/setup/CBIG_pbsubmit -cmd "$cmd" -walltime 14:00:00 -mem 3G \
             -name $jname -joberr $work_dir/$jname.err -jobout $work_dir/$jname.out
             sleep 4m

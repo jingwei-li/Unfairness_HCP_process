@@ -1,5 +1,5 @@
 function HCP_AA_WA_match_diff(split_AAdir, split_WAdir, full_subj_ls, FD_txt, DV_txt, bhvr_ls_rstr, ...
-    bhvr_ls_unrstr, num_seeds, mat_out, restricted_csv, unrestricted_csv, FS_csv)
+    bhvr_ls_unrstr, num_seeds, mat_out, restricted_csv, unrestricted_csv, FS_csv, match_ls)
 
 % HCP_AA_WA_match_diff(split_AAdir, split_WAdir, full_subj_ls, FD_txt, DV_txt, bhvr_ls_rstr, ...
 %     bhvr_ls_unrstr, num_seeds, mat_out, restricted_csv, unrestricted_csv, FS_csv)
@@ -43,10 +43,14 @@ function HCP_AA_WA_match_diff(split_AAdir, split_WAdir, full_subj_ls, FD_txt, DV
 %     '/mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/subject_measures/...
 %     unrestricted_jingweili_12_7_2017_21_0_16_NEO_A_corrected.csv'
 %   - FS_csv (optional)
-%     Fullpath of the HCP FreeSurfer stats CSV file. This is used to calculate matching 
+%     Full path of the HCP FreeSurfer stats CSV file. This is used to calculate matching 
 %     cost of intracranial volume. Default (on CSC HPC):
 %     '/mnt/isilon/CSC1/Yeolab/Data/HCP/S1200/scripts/Morphometricity/Anat_Sim_Matrix/...
 %     FS_jingweili_5_9_2017_2_2_24.csv'
+%   - match_ls (optional)
+%     Full path of the list of confounds to be matched. If not passed in, the confounds to
+%     be checked include age, gender, FD, DVARS, education, ICV. If 'NONE' is passed in, 
+%     only the difference in behavioral distributions will be checked.
 %
 % Author: Jingwei Li
 
@@ -63,6 +67,13 @@ end
 if(~exist('FS_csv', 'var') || isempty(FS_csv))
     FS_csv = fullfile(HCP_dir, 'scripts', 'Morphometricity', 'Anat_Sim_Matrix', ...
         'FS_jingweili_5_9_2017_2_2_24.csv');
+end
+if(~exist('match_ls', 'var') || isempty(match_ls))
+    match_var = {'age', 'educ', 'gender', 'FD', 'DVARS', 'ICV'};
+elseif(strcmpi(match_ls, 'none'))
+    match_var = [];
+else
+    match_var = CBIG_text2cell(match_ls);
 end
 
 %% read demographics and behavioral scores
@@ -99,7 +110,34 @@ sex = strcmp(sex, 'M');
 FD = dlmread(FD_txt);
 DV = dlmread(DV_txt);
 
-metric = [age_Educ sex FD DV ICV bhvr_val];
+metric = [];
+weigh_idx = [];
+for mv = 1:length(match_var)
+    switch match_var{mv}
+    case 'age'
+        metric = [metric age_Educ(:,1)];
+    case 'educ'
+        metric = [metric age_Educ(:,2)];
+        weigh_idx = [weigh_idx mv];
+    case 'gender'
+        metric = [metric sex];
+    case 'FD'
+        metric = [metric FD];
+    case 'DVARS'
+        metric = [metric DV];
+    case 'ICV'
+        metric = [metric ICV];
+        weigh_idx = [weigh_idx mv];
+    otherwise
+        error('Unknown variable name to be matched')
+    end
+end
+
+metric = [metric bhvr_val];
+no_match_idx = weigh_idx;
+if(~isempty(match_var))
+    weigh_idx = [weigh_idx length(match_var)+1];
+end
 metric = metric - mean(metric,1);
 metric = metric ./ sqrt(sum(metric.^2,1));
 
@@ -126,7 +164,7 @@ for seed = 1:num_seeds
     meanA_seed = []; meanW_seed = []; varA_seed = []; varW_seed = [];
     
     for b = 1:nbehav
-        curr_m = metric(:,[1:6 b+6]);
+        curr_m = metric(:,[1:length(match_var) b+length(match_var)]);
         
         A_metric{b} = [];
         W_metric{b} = [];
@@ -140,7 +178,7 @@ for seed = 1:num_seeds
             % the calculation of Hungarian matching cost should be the same as in `HCP_match_WA_with_AAfolds.m`
             cost_mat = bsxfun(@minus, reshape(curr_m(Aind,:), [length(Aind) 1 size(curr_m,2)]), ...
                 reshape(curr_m(Wind,:), [1 size(curr_m(Wind,:))]));
-            cost_mat(:,:,[2 6 7]) = cost_mat(:,:,[2 6 7]) .*2;
+            cost_mat(:,:,weigh_idx) = cost_mat(:,:,weigh_idx) .*2;
             cost_mat = sum(abs(cost_mat), 3);
             
             [assign, cost] = munkres(cost_mat);
@@ -208,8 +246,10 @@ sig_bool = zeros(size(p_tt));
 sig_bool(H_tt_FDR) = 1;
 matched_mtx = zeros(num_seeds, nbehav);
 for b = 1:nbehav
-    curr_bool = sig_bool(:, ((b-1)*7+1):(b*7) );
-    curr_bool(:,[2 6]) = [];    % Educ and ICV can't be matched in this data
+    curr_bool = sig_bool(:, ((b-1)*(length(match_var)+1)+1):(b*(length(match_var)+1)) );
+    if(any(no_match_idx))
+        curr_bool(:,no_match_idx) = [];    % Educ and ICV can't be matched in this data
+    end
     sum_bool = sum(curr_bool, 2);
     matched = find(sum_bool == 0);
     if(~isempty(matched))
@@ -221,7 +261,7 @@ for b = 1:nbehav
     end
 end
 
-save(mat_out, 'p_ks', 'H_ks', 'H_ks_FDR', 'p_tt', 'H_tt', 'H_tt_FDR', 'matched_mtx')
+save(mat_out, 'p_ks', 'H_ks', 'H_ks_FDR', 'p_tt', 'H_tt', 'H_tt_FDR', 'matched_mtx', 'outlier_AA')
 
 %% save the statistics into a csv file
 header = {'Random split #'};
