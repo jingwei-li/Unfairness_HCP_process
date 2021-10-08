@@ -83,7 +83,7 @@ for b = 1:nbhvr
     end
     sub_fold = struct('subject_list', fold_list, 'fold_index', fold_index);
     sub_fold(1).all_subjects = curr_sub;
-    save(fullfile(outdir, ['no_relative_' num2str(nfolds) '_fold_sub_list_' behaviors{b} '.mat']), 'sub_fold');
+    save(fullfile(outdir, ['no_relative_' num2str(nfolds) '_fold_sub_list_' full_bhvr{b} '.mat']), 'sub_fold');
 end
     
 end

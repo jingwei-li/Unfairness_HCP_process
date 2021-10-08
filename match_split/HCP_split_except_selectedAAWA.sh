@@ -22,7 +22,7 @@ main(){
     jname="split_others"
 
     for seed in $(seq 1 1 $max_seed); do
-        cmd="matlab -nodesktop -nodisplay -nojvm -r \" HCP_split_except_selectedAAWA('$subj_ls', \
+        cmd="matlab -nodesktop -nodisplay -nojvm -r \" addpath $DIR; HCP_split_except_selectedAAWA('$subj_ls', \
             '$bhvr_ls', $seed, ['$AAsplit_stem' '$seed' '.mat'], ['$WAsplit_stem' '$seed' '.mat'], \
             fullfile('$outdir', ['split_seed' '$seed' '.mat']), '$restricted_csv'); exit; \" "
         $CBIG_CODE_DIR/setup/CBIG_pbsubmit -cmd "$cmd" -walltime 01:00:00 -mem 2G \
