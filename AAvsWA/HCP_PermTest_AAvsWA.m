@@ -21,7 +21,7 @@ function HCP_PermTest_AAvsWA(group_diff, bhvr_ls, metric, outmat)
 %
 % Author: Jingwei Li
 
-alpha = 0.5;
+alpha = 0.05;
 nseeds = 40;
 nperm = 1000;
 

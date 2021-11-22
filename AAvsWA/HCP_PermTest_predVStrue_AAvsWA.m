@@ -4,7 +4,7 @@ function HCP_PermTest_predVStrue_AAvsWA(group_diff, bhvr_ls, outmat)
 %
 %
 
-alpha = 0.5;
+alpha = 0.05;
 nseeds = 40;
 nperm = 1000;
 
