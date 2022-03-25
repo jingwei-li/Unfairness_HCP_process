@@ -24,7 +24,8 @@ main() {
     num_test_folds=10
     num_inner_folds=10
 
-    for seed in $(seq 45 1 $max_seed); do
+    for seed in $(seq 1 1 $max_seed); do
+    #for seed in $(seq 45 1 $max_seed); do
         echo "seed = $seed"
         bhvr_ls="$use_seed_bhvr_dir/usable_behaviors_seed${seed}.txt"
         if [ -f $bhvr_ls ]; then

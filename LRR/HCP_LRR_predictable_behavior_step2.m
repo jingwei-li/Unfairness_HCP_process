@@ -67,6 +67,7 @@ function LRR_perm(features, cov_X, LRR_dir, start_iter, maxLRR_iter, Nperm, Pset
 
             %% do confound regression from features, if necessary
             if(~isempty(cov_X) && ~strcmpi(cov_X, 'none'))
+                cov_X_mean = mean(cov_X(train_ind, :), 1);
                 [feat_train, beta] = CBIG_regress_X_from_y_train(feat_train', ...
                     cov_X(train_ind, :));
                 beta_pre = load(fullfile(LRR_dir, ['randseed_' num2str(i)], bhvr_nm, ...
@@ -76,7 +77,7 @@ function LRR_perm(features, cov_X, LRR_dir, start_iter, maxLRR_iter, Nperm, Pset
                 end
 
                 feat_test = CBIG_regress_X_from_y_test(feat_test', ...
-                    cov_X(test_ind, :), beta);
+                    cov_X(test_ind, :), beta, cov_X_mean);
                 feat_train = feat_train';  feat_test = feat_test';
             end
 

@@ -128,7 +128,7 @@ clear
 proj_dir = '/home/jingweil/storage/MyProject/fairAI/HCP_race';
 LRR_dir = fullfile(proj_dir, 'trained_model', ...
     'LRR', '948sub', 'reg_AgeSexMtEducIcvInc_fr_y_FC');
-R_10 = CBIG_text2cell(fullfile(LRR_dir, 'lists', ['R_thres0.1_8behaviors.txt']));
+R_10 = CBIG_text2cell(fullfile(LRR_dir, 'lists', ['R_thres0.1_8behaviors.txt'])); 
 
 COD_union = CBIG_text2cell(fullfile(LRR_dir, 'lists', ...
     'pCOD_union_pos_behaviors.txt'));
